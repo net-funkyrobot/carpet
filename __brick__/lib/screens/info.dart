@@ -1,0 +1,14 @@
+import 'package:blocks/l10n/s.dart';
+import 'package:flutter/material.dart';
+
+class InfoScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final strings = S.of(context);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(strings.infoScreenLabel)),
+      body: Center(child: Text(strings.infoScreenDescription)),
+    );
+  }
+}
