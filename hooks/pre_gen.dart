@@ -3,12 +3,21 @@ import 'dart:io';
 import 'package:mason/mason.dart';
 
 void run(HookContext context) async {
-  final appId = context.vars['app-id'].split('.');
   final logger = context.logger;
-  final packageNameParamCase = appId.last;
-  final packageName = appId.last.replaceAll('-', '_');
+
+  // Validate app ID
+  if (!RegExp(r'^[A-Za-z0-9.]+$').hasMatch(context.vars['app-id'])) {
+    logger.err(
+      "Your the parts of your app ID namespace must not contain dashes, underscores or "
+      "other separator characters",
+    );
+    exit(1);
+  }
 
   // Create derivative vars
+  final appId = context.vars['app-id'].split('.');
+  final packageNameParamCase = appId.last;
+  final packageName = appId.last.replaceAll('-', '_');
   context.vars.addAll(
     {
       'package-name': packageName,
@@ -17,13 +26,31 @@ void run(HookContext context) async {
   );
 
   // Check for external dependencies
-  final externalDeps = ['node', 'dart', 'gh'];
+  final externalDeps = ['node', 'dart', 'gh', 'firebase', 'flutterfire'];
   for (final dep in externalDeps) {
     final whichResult = await Process.run('which', [dep]);
     if (whichResult.exitCode != 0) {
-      logger.err('You must have $dep installed on your system.');
+      logger.err(
+        'You must have $dep installed on your system before making this brick.',
+      );
       exit(whichResult.exitCode);
     }
+  }
+
+  final ghAuthCheckResult = await Process.run('gh', ['auth', 'status']);
+  if (ghAuthCheckResult.exitCode != 0) {
+    logger.err(
+      'You must authenticate with GitHub CLI before making this brick.',
+    );
+    exit(ghAuthCheckResult.exitCode);
+  }
+
+  final fbAuthCheckResult = await Process.run('firebase', ['login:list']);
+  if (fbAuthCheckResult.exitCode != 0) {
+    logger.err(
+      'You must authenticate with Firebase CLI before making this brick.',
+    );
+    exit(fbAuthCheckResult.exitCode);
   }
 
   // Check if package-name already exists as a repo on GitHub
@@ -50,9 +77,12 @@ void run(HookContext context) async {
     context.vars['org'],
     context.vars['package-name'],
   ]);
-  logger.info(result.stdout);
   if (result.exitCode != 0) {
     logger.err(result.stderr);
     exit(result.exitCode);
   }
+
+  // Remove flutter generated stuff that will need to be overwritten
+  Process.run('rm', ['$packageName/pubspec.yaml']);
+  Process.run('rm', ['$packageName/lib/main.dart']);
 }

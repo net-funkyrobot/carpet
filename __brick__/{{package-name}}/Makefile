@@ -8,7 +8,7 @@
 # GENERIC
 
 # Run npm install (with firebase CLI as dev dependency)
---node_modules: package.json
+node_modules: package.json
 	npm i
 
 # Flutter Dart pub get, gets Dart dependencies
@@ -22,34 +22,24 @@
 
 # INFRASTRUCTURE
 
-# Install Firebase CLI if it isn't already
-.stamps/firebase-cli.installed: | .stamps
-	npm i -g firebase-tools
-	@touch $@
-
-# Authenticate with Firebase (if not already)
-# This launches a browser window for Google login
-.stamps/firebase.authenticated: | .stamps/firebase-cli.installed
-	firebase login
-
 # Create the Firebase project in a new Google Cloud project
-.stamps/firebase-project.created.perm: | .stamps/firebase.authenticated
-	firebase projects:create {{app-id.paramCase()}} -n {{name}} -o {{google-cloud-org-id}}
+.stamps/firebase-project.created.perm: | .stamps
+	firebase projects:create {{app-id.paramCase()}} -n {{name}} -o {{google-cloud-org-id}} --non-interactive
 	@touch $@
 
 # Set the newly created Firebase project as default for this directory
-.stamps/firebase-use.done: | .stamps/firebase-project.created.perm
-	firebase use {{app-id.paramCase()}}
+.stamps/firebase-use.done: | .stamps .stamps/firebase-project.created.perm
+	firebase use {{app-id.paramCase()}} --non-interactive
 	@touch $@
 
 # Create an Android app in the new Firebase project
-.stamps/firebase-app-android.created.perm: | .stamps/firebase-project.created
-	firebase app:create -a {{app-id}} ANDROID {{name}}
+.stamps/firebase-app-android.created.perm: | .stamps .stamps/firebase-project.created.perm
+	firebase apps:create -a {{app-id}} ANDROID {{name}} --non-interactive
 	@touch $@
 
 # Create an iOS app in the new Firebase project
-.stamps/firebase-app-ios.created.perm: | .stamps/firebase-project.created
-	firebase app:create -b {{app-id}} IOS {{name}} -s {{app-id}}
+.stamps/firebase-app-ios.created.perm: | .stamps .stamps/firebase-project.created.perm
+	firebase apps:create -b {{app-id}} IOS {{name}} --non-interactive
 	@touch $@
 
 .stamps/infrastructure-setup.done: | .stamps/firebase-use.done .stamps/firebase-app-android.created.perm .stamps/firebase-app-ios.created.perm
@@ -60,22 +50,28 @@ infrastructure: | .stamps/infrastructure-setup.done
 
 # PREPARE
 
-# Install flutterfire CLI (configures firebase in the Flutter app)
-.stamps/flutterfire-cli.installed: | .stamps pubspec.yaml
-	dart pub global activate flutterfire_cli
-	@touch $@
-
 # Flutterfire configure. Generates dart code needed to initiialise Firebase in the Flutter app
-lib/firebase_options.dart: | .stamps/flutterfire-cli.installed .stamps/infrastructure-setup.done
+lib/firebase_options.dart: | .stamps/infrastructure-setup.done
 	flutterfire configure -p {{app-id.paramCase()}} -a {{app-id}} -i {{app-id}} --platforms ios,android --yes
 
+# Add additional things to the .gitignore file extra to what flutter create provides
+# node_modules/
+# .stamps/
+# !.stamps/*.perm
+--extra-gitignore:
+	echo "\n# Node/NPM/Firebase related\nnode_modules/\n\n#Makefile .stamps\n.stamps/\n!.stamps/*.perm\n" >> .gitignore
+
 # Create a private GitHub repo and push all the initial files
-.git:
+.git: --extra-gitignore
 	git init
 	gh repo create {{package-name}} --private --source=.
 	git add -A && git commit -m "Initial commit" && git push -u origin main
 
-.stamps/codebase-setup.done: | --node_modules --pubspec.lock --build-runner-build lib/firebase_options.dart .git
+# Libraries like Firestore require a higher iOS platform version than flutter create defaults to
+--set-ios-platform:
+	sed -i "" -e "s/# platform :ios, '9.0'/platform :ios, '10.0'/g" ios/Podfile
+
+.stamps/codebase-setup.done: | node_modules --pubspec.lock --build-runner-build lib/firebase_options.dart ios/Podfile --set-ios-platform .git
 	@touch $@
 
 prepare: | .stamps/codebase-setup.done
@@ -85,7 +81,7 @@ prepare: | .stamps/codebase-setup.done
 
 # Create Firebase emulators (currently just Firestore)
 .stamps/firebase-emulators.created: | .stamps
-	npx firebase setup:emulators:firestore
+	firebase setup:emulators:firestore
 	@touch $@
 
 dev: | .stamps/firebase-emulators.created --pubspec.lock lib/firebase_options.dart
@@ -93,18 +89,3 @@ dev: | .stamps/firebase-emulators.created --pubspec.lock lib/firebase_options.da
 
 dev-build-runner: | --pubspec.lock
 	flutter pub run build_runner watch --delete-conflicting-outputs
-
-# ---------------------------------------
-# TODO
-# ---------------------------------------
-# Run tests
-#		Rules tests
-#   Flutter tests
-#
-# Deploy
-#   Android
-#     Run gradle build from the command line, produce android archive
-#     Upload to Play Store via API
-#   iOS
-#     Run commandline to build xcode
-#     Upload to App Store via API
