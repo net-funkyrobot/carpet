@@ -21,5 +21,21 @@ environment:
 vars:
   name:
     type: string
-    description: Your product's name
-    prompt: What is your name?
+    description: "Your product's name"
+    prompt: "What is your product's name?"
+  description:
+    type: string
+    description: "Your product's description"
+    prompt: "Product description?"
+  app-id:
+    type: string
+    description: "An Android and iOS compatible app ID with full organisation namespace. It should use dashes, e.g. net.startupworx.app-name"
+    prompt: "Your app ID"
+  google-cloud-org-id:
+    type: string
+    description: "Google Cloud organization ID. This is used to create the Firebase project under the correct Google Cloud organization."
+    prompt: "Google Cloud organization ID"
+  android-debug-fingerprint:
+    type: string
+    description: "Android developer debug SHA1 fingerprint"
+    prompt: "Android debug fingerprint"
