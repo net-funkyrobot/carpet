@@ -36,7 +36,7 @@ Optionally you can add, enable and setup the following supported providers:
 
 Until you add the optional providers, sign-in via these methods will fail.
 
-## Getting started as a new developer
+## Getting started as a new developer 👩‍💻
 
 You're a new developer joining this product, welcome!
 
@@ -45,5 +45,10 @@ You've just cloned the codebase, changed into the project's root directory. All 
 ```
 make prepare
 ```
+
+This:
+
+- Prepares a local NodeJS environment for running Firebase emulators and running a Firestore rules test suite.
+- Gets Dart pub dependencies.
 
 DON'T WORRY running `make prepare` will not attempt to recreate the backend infrastructure for this product (as we'll already have the appropriate Makefile stamps in `.stamps/`).
