@@ -85,4 +85,5 @@ void run(HookContext context) async {
   // Remove flutter generated stuff that will need to be overwritten
   Process.run('rm', ['$packageName/pubspec.yaml']);
   Process.run('rm', ['$packageName/lib/main.dart']);
+  Process.run('rm', ['$packageName/README.md']);
 }
