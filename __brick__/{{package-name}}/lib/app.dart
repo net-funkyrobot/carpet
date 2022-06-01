@@ -128,6 +128,8 @@ class _SignInApp extends StatelessWidget {
     return MaterialApp(
       key: const ValueKey("sign-in-app"),
       title: "{{name}}",
+      localizationsDelegates: S.localizationsDelegates,
+      supportedLocales: S.supportedLocales,
       theme: blocksLightTheme,
       darkTheme: blocksDarkTheme,
       routes: <String, WidgetBuilder>{
