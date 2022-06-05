@@ -58,7 +58,7 @@ lib/firebase_options.dart: | .stamps/infrastructure-setup.done
 # node_modules/
 # .stamps/
 # !.stamps/*.perm
-extra-gitignore:
+--extra-gitignore:
 	sed -i "" -e "s/^\.idea\//.idea\/\*/g" .gitignore
 	echo "\n# Node/NPM/Firebase related\nnode_modules/\n\n# Makefile .stamps\n.stamps/*\n!.stamps/*.perm\n\n# IntelliJ Flutter run configurations\n!.idea/runConfigurations\n!.idea/runConfigurations/*\n" >> .gitignore
 
