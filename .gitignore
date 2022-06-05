@@ -5,5 +5,5 @@
 .packages
 build/
 
-.vscode
-.idea
+/.vscode
+/.idea
