@@ -59,7 +59,7 @@ lib/firebase_options.dart: | .stamps/infrastructure-setup.done
 # .stamps/
 # !.stamps/*.perm
 --extra-gitignore:
-	echo "\n# Node/NPM/Firebase related\nnode_modules/\n\n#Makefile .stamps\n.stamps/\n!.stamps/*.perm\n" >> .gitignore
+	echo "\n# Node/NPM/Firebase related\nnode_modules/\n\n#Makefile .stamps\n.stamps/*\n!.stamps/*.perm\n" >> .gitignore
 
 # Create a private GitHub repo and push all the initial files
 .git: --extra-gitignore
