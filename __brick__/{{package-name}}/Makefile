@@ -63,7 +63,7 @@ lib/firebase_options.dart: | .stamps/infrastructure-setup.done
 	echo "\n# Node/NPM/Firebase related\nnode_modules/\n\n# Makefile .stamps\n.stamps/*\n!.stamps/*.perm\n\n# IntelliJ Flutter run configurations\n!.idea/runConfigurations\n!.idea/runConfigurations/*\n" >> .gitignore
 
 # Create a private GitHub repo and push all the initial files
-.git: --extra-gitignore
+.git: | --extra-gitignore
 	git init
 	gh repo create {{package-name}} --private --source=.
 	git add -A && git commit -m "Initial commit" && git push -u origin main
@@ -72,7 +72,16 @@ lib/firebase_options.dart: | .stamps/infrastructure-setup.done
 --set-ios-platform:
 	sed -i "" -e "s/# platform :ios, '9.0'/platform :ios, '10.0'/g" ios/Podfile
 
-.stamps/codebase-setup.done: | node_modules --pubspec.lock --build-runner-build lib/firebase_options.dart ios/Podfile --set-ios-platform .git
+# Again Firestore requires a higher Android minimum SDK version than Flutter's default (21 instead of 16)
+--set-android-min-sdk-version:
+	sed -i "" -e "s/ flutter\.minSdkVersion/ 21/g" android/app/build.gradle
+
+# Commit all the changes that the prepare target creates (stamp before commands are run so the stamp is included)
+.stamps/prepare-changes-commit.done.perm: | .stamps
+	@touch $@
+	git add -A && git commit -m "Add initial make prepare changes" && git push -u origin main
+
+.stamps/codebase-setup.done: | .git node_modules --pubspec.lock --build-runner-build lib/firebase_options.dart ios/Podfile --set-ios-platform --set-android-min-sdk-version .stamps/prepare-changes-commit.done.perm
 	@touch $@
 
 prepare: | .stamps/codebase-setup.done
