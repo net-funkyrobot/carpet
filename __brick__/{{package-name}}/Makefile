@@ -42,7 +42,13 @@ node_modules: package.json
 	firebase apps:create -b {{app-id}} IOS {{name}} --non-interactive
 	@touch $@
 
-.stamps/infrastructure-setup.done: | .stamps/firebase-use.done .stamps/firebase-app-android.created.perm .stamps/firebase-app-ios.created.perm
+# Provsion the Firestore database in the specified region
+.stamps/firestore.created.perm: | .stamps .stamps/firebase-project.created.perm
+	gcloud firestore databases create --region={{google-cloud-region}}
+	firebase deploy --only firestore:rules
+	@touch $@
+
+.stamps/infrastructure-setup.done: | .stamps/firebase-use.done .stamps/firebase-app-android.created.perm .stamps/firebase-app-ios.created.perm .stamps/firestore.created.perm
 
 infrastructure: | .stamps/infrastructure-setup.done
 	echo "Infrastructure created"
