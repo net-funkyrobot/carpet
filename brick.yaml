@@ -35,10 +35,6 @@ vars:
     type: string
     description: "Google Cloud organization ID. This is used to create the Firebase project under the correct Google Cloud organization."
     prompt: "Google Cloud organization ID"
-  google-cloud-region:
-    type: string
-    description: "The Google Cloud region ID where cloud resources should be created. Use 'gcloud app regions list' to see a list of valid regions."
-    prompt: "The Google Cloud region ID"
   android-debug-fingerprint:
     type: string
     description: "Android developer debug SHA1 fingerprint"

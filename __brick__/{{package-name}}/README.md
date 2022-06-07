@@ -38,7 +38,21 @@ Optionally you can add, enable and setup the following supported providers:
 
 Until you add the optional providers, sign-in via these methods will fail.
 
-### Step three: build and run the app for the first time
+### Step three: Create Firestore database and deploy Firestore rules
+
+This step requires upgrading the Firebase billing plan to "Blaze" (pay as you go) and therefore it cannot be automated (there is no CLI or API to do that).
+
+Go to https://console.firebase.google.com/project/{{app-id.paramCase()}}/firestore/.
+
+Click "Create database" and choose "production mode" (so that a closed rules set is used before we deploy our own rules). Choose a location to provision the cloud resources. Remember to note down the location as it is better to co-locate resources. Click "Enable".
+
+Back in the project root, run:
+
+```
+make deploy-rules
+```
+
+### Step four: build and run the app for the first time
 
 Via IntelliJ / Android Studio / command line, build and run the flutter app on any kind of device.
 

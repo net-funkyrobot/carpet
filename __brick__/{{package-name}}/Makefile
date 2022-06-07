@@ -42,13 +42,7 @@ node_modules: package.json
 	firebase apps:create -b {{app-id}} IOS {{name}} --non-interactive
 	@touch $@
 
-# Provsion the Firestore database in the specified region
-.stamps/firestore.created.perm: | .stamps .stamps/firebase-project.created.perm
-	gcloud firestore databases create --region={{google-cloud-region}}
-	firebase deploy --only firestore:rules
-	@touch $@
-
-.stamps/infrastructure-setup.done: | .stamps/firebase-use.done .stamps/firebase-app-android.created.perm .stamps/firebase-app-ios.created.perm .stamps/firestore.created.perm
+.stamps/infrastructure-setup.done: | .stamps/firebase-use.done .stamps/firebase-app-android.created.perm .stamps/firebase-app-ios.created.perm
 
 infrastructure: | .stamps/infrastructure-setup.done
 	echo "Infrastructure created"
@@ -93,6 +87,7 @@ lib/firebase_options.dart: | .stamps/infrastructure-setup.done
 prepare: | .stamps/codebase-setup.done
 	echo "Codebase setup completed"
 
+
 # DEV
 
 # Create Firebase emulators (currently just Firestore)
@@ -105,3 +100,10 @@ dev: | .stamps/firebase-emulators.created --pubspec.lock lib/firebase_options.da
 
 dev-build-runner: | --pubspec.lock
 	flutter pub run build_runner watch --delete-conflicting-outputs
+
+
+# DEPLOY
+
+# Deploy changes in Firestore rules
+deploy-rules:
+	firebase deploy --only firestore:rules
