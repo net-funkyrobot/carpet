@@ -1,9 +1,5 @@
 .DS_Store
 
-# Files and directories created by pub
-.dart_tool/
-.packages
-build/
-
-/.vscode
-/.idea
+config.json
+workspace/**
+!workspace/.gitkeep

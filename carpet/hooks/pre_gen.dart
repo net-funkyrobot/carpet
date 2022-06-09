@@ -25,6 +25,30 @@ void run(HookContext context) async {
     },
   );
 
+  final gitMainResult = await Process.run('git', ['config', '--global', 'init.defaultBranch']);
+  if (gitMainResult.exitCode != 0) {
+    logger.err(
+      'Please use `git config --global init.defaultBranch main` to update your default branch name.',
+    );
+    exit(gitMainResult.exitCode);
+  }
+
+  final gitUserResult = await Process.run('git', ['config', '--global', 'user.name']);
+  if (gitUserResult.exitCode != 0) {
+    logger.err(
+      'Please set your git user.',
+    );
+    exit(gitUserResult.exitCode);
+  }
+
+  final gitEmailResult = await Process.run('git', ['config', '--global', 'user.email']);
+  if (gitEmailResult.exitCode != 0) {
+    logger.err(
+      'Please set your git email.',
+    );
+    exit(gitEmailResult.exitCode);
+  }
+
   // Check for external dependencies
   final externalDeps = ['node', 'dart', 'gh', 'firebase', 'flutterfire'];
   for (final dep in externalDeps) {
