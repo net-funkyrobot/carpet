@@ -1,5 +1,7 @@
 # carpetwrong
 
+Don't carpetwrong! Carpet the right way using `carpetwrong`.
+
 A developer wrapper around our `carpet` Mason template.
 
 ## Getting started 🚀
