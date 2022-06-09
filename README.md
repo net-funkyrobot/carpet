@@ -1,4 +1,4 @@
-# carpetright
+# carpetwrong
 
 A developer wrapper around our `carpet` Mason template.
 
