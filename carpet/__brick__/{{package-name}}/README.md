@@ -18,7 +18,7 @@ This:
 - Gets Dart pub dependencies.
 - Runs the `build_runner` to generate `freezed` and `json_serializable` code.
 - Creates a Firebase project with an Android and iOS app
-- Runs `flutterfire` CLI to create `firebase_options.dart` file with the Firebase app's credentials.
+- Runs `flutterfire` CLI to create `firebase_options.dart` and `google-services.json` files with the Firebase app's credentials.
 - Creates a Github repo for your project and pushes the initial files.
 - Creates a Firebase project.
 - Creates both iOS and Android apps in your Firebase project.

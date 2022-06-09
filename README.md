@@ -16,7 +16,7 @@ It also creates a `Makefile` with a `prepare` target which:
 - Gets Dart pub dependencies.
 - Runs the `build_runner` to generate `freezed` and `json_serializable` code.
 - Creates a Firebase project with an Android and iOS app
-- Runs `flutterfire` CLI to create `firebase_options.dart` file with the Firebase app's credentials.
+- Runs `flutterfire` CLI to create `firebase_options.dart` and `google-services.json` files with the Firebase app's credentials.
 - Creates a Github repo for your project and pushes the initial files.
 - Creates a Firebase project.
 - Creates both iOS and Android apps in your Firebase project.
@@ -27,21 +27,21 @@ And then there's the template itself:
 
 A great starter app with:
 
-- A two-app structure (unauthed and authed) that uses separate MaterialApp widgets which have separate routes, navigation and state.
-- Authentication lifecycle switches between them.
+- A two-app structure (unauthed and authed) that uses separate `MaterialApp` widgets which have separate routes, navigation and state.
+  - The authentication lifecycle switches between them.
 - Fully integrated Firebase Auth with Email, Google and Apple identity providers supported.
 - Users are always authed into an anonymous user before signing in with email or an identity provider.
 - A standard tabbed home screen with app bar and pop out menu.
 - A settings screen, an app info screen.
 - A developer screen with a widget catalog (in-app components library).
 - [Freezed][8] immutable model / dataclass generation and JSON serialization
-- A Good Bloc setup and example blocs (one for user profile).
+- A good Bloc setup and example blocs (one for user profile).
 - Firestore integration and example usage via user profile bloc.
 
 Also:
 
 - Typescript unit test suite for the Firestore rules.
-- A Makefile for setup and lifecycle scripts that uses "stamps" to track already completed actions.
+- A Makefile for setup and lifecycle scripts that uses _stamps_ to track already completed actions.
 
 ## Getting started 🚀
 
@@ -63,7 +63,7 @@ mason make carpet --name=YourAppName\
  --app-id net.yourcompanyname.yourappname
 ```
 
-### Prerequisites
+### Full prerequisites
 
 - A Mac running Big Sur or later.
 - A Google Cloud organisation set up with an active billing account.
@@ -90,7 +90,7 @@ dart pub global activate flutterfire_cli
 
 - [Mason CLI][9]:
 
-**Install Mason CLI via Dart pub and not via homebrew**.
+Install Mason CLI via Dart pub and **not via homebrew**.
 
 ```
 dart pub global activate mason_cli
